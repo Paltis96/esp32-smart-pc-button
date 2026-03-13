@@ -1,0 +1,121 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  min-height: 24px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  background: var(--card-bg-color);
+  border: 1px solid var(--card-border-color);
+  border-radius: 12px;
+  word-break: break-word;
+}
+
+/* sections */
+.card-header,
+.card-content {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.card-header.has-border {
+  border-bottom: 1px solid var(--card-border-color);
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  padding: 8px;
+}
+
+.card-footer.has-border {
+  border-top: 1px solid var(--card-border-color);
+}
+
+/* header text */
+.card-header-title {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.card-header-title:last-child,
+.card-header-description:last-child {
+  margin-bottom: 0;
+}
+
+.card-header-description {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--text-color-secondary);
+}
+
+/* links */
+.card a {
+  color: var(--accent-color);
+  transition: opacity var(--animation-time);
+}
+
+.card a:hover {
+  opacity: .8;
+  text-decoration: underline;
+}
+
+/* loader */
+.card-loader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--text-color-secondary);
+}
+
+/* HP bar */
+.hp-bar {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  height: 12px;
+}
+
+.hp-item {
+  flex: 1;
+  border-radius: 2px;
+  background: var(--bg-color-secondary);
+}
+
+.hp-item.up   { background: var(--bg-color-success); }
+.hp-item.down { background: var(--bg-color-error); }
+
+/* HP status */
+.hp-status {
+  width: 50px;
+  padding: 8px;
+  border-radius: 20px;
+  font-size: 14px;
+  text-align: center;
+  white-space: nowrap;
+  background: var(--bg-color-secondary);
+  color: var(--text-color-secondary);
+}
+
+.hp-status.up,
+.hp-status.down {
+  color: var(--bg-color);
+}
+
+.hp-status.up   { background: var(--bg-color-success); }
+.hp-status.down { background: var(--bg-color-error); }
+
+/* variants & helpers */
+.card.dashboard {
+  background: var(--bg-color);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

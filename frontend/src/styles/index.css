@@ -1,0 +1,89 @@
+@import "solid-notifications/index.css";
+
+@import "./normalize.css";
+@import "./fonts.css";
+@import "./forms.css";
+@import "./buttons.css";
+@import "./navbar.css";
+@import "./tabs.css";
+@import "./cards.css";
+@import "./alert.css";
+@import "./layout.css";
+@import "./sceleton.css";
+@import "./badge.css";
+
+:root {
+  /* brand */
+  --accent-color: #5bdd8a;
+  --btn-accent-color-hover: #3eae67;
+  --btn-accent-color-active: #1f743e;
+
+  /* text */
+  --text-color-main: #ffffff;
+  --text-color-secondary: #9f9fa9;
+  --text-color-error: #ee617e;
+
+  /* background */
+  --bg-color: #111111;
+  --bg-color-secondary: #353535;
+  --bg-color-info: #66d1ff;
+  --bg-color-error: #ee617e;
+  --bg-color-success: #5bdd8a;
+
+  /* cards */
+  --card-bg-color: #1c1c1c;
+  --card-border-color: #343434;
+
+  /* inputs */
+  --input-text-color: #ffffff;
+  --input-bg-color: #353535;
+  --input-border-color: #828282;
+  --input-label-color: #9f9fa9;
+
+  /* buttons */
+  --btn-bg-color-disabled: #cccccc;
+  --btn-text-color-disabled: #666666;
+
+  /* animation */
+  --animation-time: 0.2s;
+}
+
+.sn-theme-dark {
+  /* toast */
+  --sn-toast-bg-color: #1c1c1c;
+}
+
+/* base */
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  color: var(--text-color-main);
+  background: var(--bg-color);
+}
+
+h1,
+h2 {
+  margin: 0;
+}
+
+h1 {
+  font-weight: 700;
+}
+
+h2 {
+  font-weight: 500;
+}
+
+/* Custom styles for mobile devices */
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 8px;
+  }
+  .input-wrapper {
+    width: 150px;
+  }
+  .input.text-input {
+    width: 150px;
+  }
+}

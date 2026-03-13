@@ -1,0 +1,49 @@
+/* Primary button base styles */
+.primary-button {
+  padding: 10px 20px;
+  margin: 6px 8px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  transition:
+    opacity var(--animation-time),
+    transform var(--animation-time);
+}
+
+/* Button variants */
+.primary-button.contained {
+  background: var(--accent-color);
+  color: var(--bg-color);
+}
+
+.primary-button.outlined {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.primary-button.text-btn {
+  color: var(--accent-color);
+  padding: 10px;
+}
+
+/* Hover and disabled states */
+.primary-button:hover:not(:disabled) {
+  opacity: 0.75;
+}
+
+.primary-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.primary-button.contained:disabled {
+  background: var(--btn-bg-color-disabled);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+.primary-button.text-btn:disabled {
+  color: var(--text-color-secondary);
+}
