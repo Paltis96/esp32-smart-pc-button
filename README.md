@@ -30,6 +30,7 @@ Web UI, REST API, or Home Assistant.
   - [5. Run the Device](#5-run-the-device)
 - [REST API](#rest-api)
 - [Home Assistant Integration Example](#home-assistant-integration-example)
+- [Future Improvements](#future-improvements)
 - [License](#license)
 
 
@@ -221,6 +222,15 @@ button:
         press:
           service: rest_command.pc_power_on
 ```
+# Future Improvements
+
+Planned ideas and possible future enhancements:
+
+- Wi-Fi setup mode (initial configuration through a temporary access point)
+- Wi-Fi reset functionality to clear saved credentials and re-enter setup mode
+- Allow monitoring **multiple network devices** simultaneously
+- Add **MQTT support** for deeper Home Assistant integration
+- Improve **network monitoring logic** (custom intervals, retries, thresholds)
 
 # License
 
