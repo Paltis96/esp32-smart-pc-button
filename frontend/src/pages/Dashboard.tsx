@@ -81,11 +81,24 @@ const DashboardPage: Component = () => {
         return "progress-info";
     }
   };
+  const wifiBadgeColor = (val: string) => {
+    const s = val.split(" ")[0];
+    switch (true) {
+      case s === "Poor":
+        return "badge-error";
+      case s === "Fair":
+        return "badge-warning";
+      case s === "Good" || s === "Excellent":
+        return "badge-success";
+      default:
+        return "";
+    }
+  };
   return (
     <>
       <Show when={ctx?.config.status === "success"}>
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 m-2">
-          <div class="col-span-1 col-start-1 md:col-span-4 md:col-start-2">
+        <div class="grid md:grid-flow-col md:grid-rows-3 gap-4">
+          <div class="md:col-span-1 md:row-span-3">
             <Switch>
               <Match when={ctx?.config.data?.auto_power_on}>
                 <HpCardHost
@@ -98,10 +111,6 @@ const DashboardPage: Component = () => {
                     url={ctx?.config.data?.target_ip}
                     hpList={ctx?.ping.data.target_history}
                   />
-
-                  <button class="btn btn-soft  md:h-25" disabled>
-                    Add
-                  </button>
                 </HpCardHost>
               </Match>
               <Match when={!ctx?.config.data?.auto_power_on}>
@@ -116,8 +125,34 @@ const DashboardPage: Component = () => {
               </Match>
             </Switch>
           </div>
-
-          <div class="md:col-span-2 md:col-start-2">
+          <div class="md:col-span-1 ">
+            <CardBase>
+              <div class="flex mb-6">
+                <h2 class="text-xl font-semibold">Controls</h2>
+              </div>
+              <CardList>
+                <ButtonField
+                  title="Send signal"
+                  description="Manually send a signal to the device."
+                  label="Send"
+                  loading={signalLoading()}
+                  onClick={handleSignal}
+                  btn_type="btn-ghost"
+                  disabled={signalLoading()}
+                />
+                <ButtonField
+                  title="Reboot Esp32"
+                  description="Reboot esp switch."
+                  label="Reboot"
+                  loading={rebootLoading()}
+                  onClick={handleReboot}
+                  disabled={rebootLoading()}
+                  btn_type="btn-ghost"
+                />
+              </CardList>
+            </CardBase>
+          </div>
+          <div class="md:col-span-1 md:row-span-2">
             <CardBase>
               <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-semibold">ESP32</h2>
@@ -148,39 +183,14 @@ const DashboardPage: Component = () => {
                     </div>
                   </CardListItem>
                   <CardListItem title="WIFI Signal">
-                    <div class="text-md opacity-60">
-                      {ctx?.device.data.network.rssi || ""}
-                    </div>
+                      <Badge
+                        type={wifiBadgeColor(ctx?.device.data.network.rssi )as any}
+                      >
+                        {ctx?.device.data.network.rssi || "None"}
+                      </Badge>
                   </CardListItem>
                 </CardList>
               </Show>
-            </CardBase>
-          </div>
-          <div class="md:col-span-2 md:col-start-4">
-            <CardBase>
-              <div class="flex mb-6">
-                <h2 class="text-xl font-semibold">Controls</h2>
-              </div>
-              <CardList>
-                <ButtonField
-                  title="Send signal"
-                  description="Manually send a signal to the device."
-                  label="Send"
-                  loading={signalLoading()}
-                  onClick={handleSignal}
-                  btn_type="btn-ghost"
-                  disabled={signalLoading()}
-                />
-                <ButtonField
-                  title="Reboot Esp32"
-                  description="Reboot esp switch."
-                  label="Reboot"
-                  loading={rebootLoading()}
-                  onClick={handleReboot}
-                  disabled={rebootLoading()}
-                  btn_type="btn-ghost"
-                />
-              </CardList>
             </CardBase>
           </div>
         </div>

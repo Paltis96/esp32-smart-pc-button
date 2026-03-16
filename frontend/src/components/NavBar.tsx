@@ -19,14 +19,18 @@ const NavBar: Component<NavBarProps> = (props) => {
   };
 
   return (
-    <div class="navbar">
+    <div class="navbar fixed top-0 left-0 z-10 bg-base-200 shadow-sm">
       <div class="navbar-start"></div>
       <div class="navbar-center lg:flex">
-        <ul class="menu menu-horizontal bg-base-200 rounded-md shadow-md">
+        <ul class="menu menu-horizontal bg-base-100 rounded-md">
           <Index each={props.tabs}>
             {(tab, index) => (
               <li
-                class={activeTab() === index ? "rounded-sm menu-active" : "rounded-sm"}
+                class={
+                  activeTab() === index
+                    ? "rounded-sm menu-active"
+                    : "rounded-sm"
+                }
                 onClick={() => handleTabSelect(index)}
               >
                 <a>{tab().label}</a>
