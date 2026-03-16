@@ -21,6 +21,7 @@ jobs:
         run: |
           cd frontend
           npm install
+          export VITE_APP_VERSION=$(git describe --tags --abbrev=0)
           npm run build
 
 

@@ -20,6 +20,8 @@ const DashboardPage: Component = () => {
   const baseUrl = window.location.origin + "/api/signal";
   const ctx = useDevice();
 
+  const version = import.meta.env.VITE_APP_VERSION || "dev-build";
+
   const [rebootLoading, setRebootLoading] = createSignal(false);
   const [signalLoading, setSignalLoading] = createSignal(false);
 
@@ -105,6 +107,9 @@ const DashboardPage: Component = () => {
               </div>
               <div class="card-content">
                 <Show when={ctx?.device.data}>
+                  <CardRow title="App Version">
+                    <div class="input-description">{version}</div>
+                  </CardRow>
                   <CardRow title="Last Update">
                     <div class="input-description">
                       {ctx?.lastUpdate() || ""}
