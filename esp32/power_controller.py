@@ -9,9 +9,6 @@ class PowerController:
                  config,
                  pin=4,
                  pulse_s=1,
-                 retry_delay_s=120,
-                 history_limit=10,
-                 status_sample_size=3
                  ):
 
         self._config = config
@@ -21,9 +18,6 @@ class PowerController:
         self._host_status = False
         self.target_history = []
         self._targer_status = False
-        self._history_limit = history_limit
-        self._retry_delay_s = retry_delay_s
-        self._status_sample_size = status_sample_size
         self._pulse_s = pulse_s
         self._next_allowed_trigger_time = 0
 
@@ -61,13 +55,17 @@ class PowerController:
 
     def _push_state(self, history, state):
         history.append(state)
-        if len(history) > self._history_limit:
+        if len(history) > self._config.history_limit:
             history.pop(0)
 
     def _is_all_true(self, history) -> bool:
-        slice_list = self._status_sample_size * -1
-        history_sample = history[slice_list:]
-        if len(history_sample) < self._status_sample_size:
+        if self._config.status_sample_size >= history:
+            history_sample = history
+        else:
+            slice_list = self._config.status_sample_size * -1
+            history_sample = history[slice_list:]
+            
+        if len(history_sample) < self._config.status_sample_size:
             return False
         return all(history_sample)
 
@@ -102,7 +100,8 @@ class PowerController:
             if now >= self._next_allowed_trigger_time:
                 print('Triggering a host to wake up...')
                 self.trigger_switch()
-                self._next_allowed_trigger_time = now + self._retry_delay_s
+                self.set_delay(self._config.retry_delay_s
+                               )
 
     def status(self):
         data = {"host_history": self.host_history,

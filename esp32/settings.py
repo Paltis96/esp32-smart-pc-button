@@ -15,7 +15,9 @@ ALLOWED_KEYS = (
     "target_ip",
     "heartbeat_interval_s",
     "auto_power_on",
-    "retries"
+    "retry_delay_s",
+    'status_sample_size'
+    'history_limit'
 )
 
 
@@ -25,8 +27,10 @@ def dump_config_json(data=None):
             "auto_power_on": False,
             "host_ip": '',
             "target_ip": '',
-            "retries": 0,
-            "heartbeat_interval_s": 60
+            "heartbeat_interval_s": 60,
+            'retry_delay_s': 120,
+            'status_sample_size': 3,
+            'history_limit': 10
         }
 
     with open('./config.json', 'w') as f:
@@ -53,8 +57,16 @@ with open('./config.json') as f:
 
 
 class GeneralConfig:
-    __slots__ = ("auto_power_on", "host_ip", "target_ip",
-                 "heartbeat_interval_s", "retries", "s_pin")
+    __slots__ = ("auto_power_on",
+                 "host_ip",
+                 "target_ip",
+                 "heartbeat_interval_s",
+                 "retries",
+                 "s_pin",
+                 'retry_delay_s',
+                 'status_sample_size'
+                 'history_limit'
+                 )
     _instance = None
 
     def __new__(cls, *args, **kwargs):
@@ -67,13 +79,28 @@ class GeneralConfig:
         self.host_ip = config.get("host_ip", '')
         self.target_ip = config.get("target_ip", '')
         self.heartbeat_interval_s = config.get("heartbeat_interval_s", 10)
-        self.retries = config.get("retries", 0)
+        self.retry_delay_s = config.get("retry_delay_s", 120)
+        self.status_sample_size = config.get("status_sample_size", 3)
+        self.history_limit = config.get("history_limit", 10)
 
     def update(self, config):
+        hl = config.get("history_limit")
+        sss = config.get("status_sample_size")
+
+        if sss and hl:
+            if sss > hl:
+                raise Exception(
+                    "status_sample_size can't be bigger than history_limit")
+        elif sss and not hl:
+            if sss > self.history_limit:
+                raise Exception(
+                    "status_sample_size can't be bigger than history_limit")
+                
         for key in config:
             if hasattr(self, key):
                 setattr(self, key, config[key])
         # Save the updated configuration back to file
+
         save_config_json(self.to_dict())
 
     def to_dict(self):

@@ -61,8 +61,11 @@ async def config(request):
 
         data = request.json
         print(data)
-        conf_general.update(data)
-        return json_response(message='Configuration updated successfully', data=data)
+        try:
+            conf_general.update(data)
+            return json_response(message='Configuration updated successfully', data=data)
+        except Exception as err:
+            return json_response(message=err, status='error', status_code=400)
 
 
 @app.get('/api/signal')
