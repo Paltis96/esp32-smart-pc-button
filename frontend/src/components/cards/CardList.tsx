@@ -2,7 +2,7 @@ import { type ParentComponent } from "solid-js";
 
 const CardList: ParentComponent = (props) => {
   return (
-    <ul class="list bg-base-100 rounded-box border border-base-300">
+    <ul class="list bg-base-100 rounded-box shadow-sm">
       {props.children}
     </ul>
   );

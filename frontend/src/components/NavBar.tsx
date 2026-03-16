@@ -22,7 +22,7 @@ const NavBar: Component<NavBarProps> = (props) => {
     <div class="navbar">
       <div class="navbar-start"></div>
       <div class="navbar-center lg:flex">
-        <ul class="menu menu-horizontal bg-base-200 rounded-md">
+        <ul class="menu menu-horizontal bg-base-200 rounded-md shadow-md">
           <Index each={props.tabs}>
             {(tab, index) => (
               <li
