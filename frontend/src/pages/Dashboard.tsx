@@ -102,12 +102,12 @@ const DashboardPage: Component = () => {
             <Switch>
               <Match when={ctx?.config.data?.auto_power_on}>
                 <HpCardHost
-                  name="Host PC"
+                  name="Target PC"
                   url={ctx?.config.data?.host_ip}
                   hpList={ctx?.ping.data.host_history}
                 >
                   <HpCardTarget
-                    name="Target Device"
+                    name="Network Device"
                     url={ctx?.config.data?.target_ip}
                     hpList={ctx?.ping.data.target_history}
                   />
@@ -132,17 +132,17 @@ const DashboardPage: Component = () => {
               </div>
               <CardList>
                 <ButtonField
-                  title="Send signal"
-                  description="Manually send a signal to the device."
-                  label="Send"
+                  title="Press Power Button"
+                  description="Simulates pressing the power button on the Target PC."
+                  label="Press"
                   loading={signalLoading()}
                   onClick={handleSignal}
                   btn_type="btn-ghost"
                   disabled={signalLoading()}
                 />
                 <ButtonField
-                  title="Reboot Esp32"
-                  description="Reboot esp switch."
+                  title="Reboot ESP32"
+                  description="Restart the ESP32 controller."
                   label="Reboot"
                   loading={rebootLoading()}
                   onClick={handleReboot}
@@ -183,11 +183,13 @@ const DashboardPage: Component = () => {
                     </div>
                   </CardListItem>
                   <CardListItem title="WIFI Signal">
-                      <Badge
-                        type={wifiBadgeColor(ctx?.device.data.network.rssi )as any}
-                      >
-                        {ctx?.device.data.network.rssi || "None"}
-                      </Badge>
+                    <Badge
+                      type={
+                        wifiBadgeColor(ctx?.device.data.network.rssi) as any
+                      }
+                    >
+                      {ctx?.device.data.network.rssi || "None"}
+                    </Badge>
                   </CardListItem>
                 </CardList>
               </Show>

@@ -18,7 +18,8 @@ type GeneralConfigForm = {
   host_ip: string;
   target_ip: string;
   heartbeat_interval_s: number;
-  // retries: number;
+  status_sample_size: number;
+  retry_delay_s: number;
 };
 
 type FormProps = {
@@ -53,8 +54,8 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
                 {...props}
                 value={field.value || false}
                 error={field.error}
-                title="Auto power on"
-                description="Enable automatic power on when the device is detected"
+                title="Auto Power On"
+                description="Automatically power on the PC when the Network Device becomes available."
               />
             )}
           </GField>
@@ -76,7 +77,8 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
                   type="text"
                   placeholder="0.0.0.0"
                   error={field.error}
-                  title="Host IP address"
+                  title="Target PC IP Address"
+                  description="IP address used to check whether the PC is online."
                   required
                 />
               )}
@@ -117,9 +119,46 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
                   min="10"
                   placeholder="10"
                   error={field.error}
-                  title="Heartbeat interval"
-                  description="Time interval in seconds to ping the target device"
+                  title="Ping Interval"
+                  description="Time interval in seconds between checks of the monitored devices."
                   required
+                />
+              )}
+            </GField>
+            <GField
+              name="retry_delay_s"
+              type="number"
+            >
+              {(field, props) => (
+                <TextInput
+                  {...props}
+                  value={field.value}
+                  type="number"
+                  min="60"
+                  placeholder="120"
+                  error={field.error}
+                  title="retry_delay_s"
+                  description=""
+                  disabled
+                />
+              )}
+            </GField>
+            <GField
+              name="status_sample_size"
+              type="number"
+            >
+              {(field, props) => (
+                <TextInput
+                  {...props}
+                  value={field.value}
+                  type="number"
+                  min="1"
+                  max="10"
+                  placeholder="1"
+                  error={field.error}
+                  title="status_sample_size"
+                  description=""
+                  disabled
                 />
               )}
             </GField>

@@ -8,6 +8,7 @@ export type TextInputProps = {
   description?: string;
   min?: string;
   max?: string;
+  disabled?: boolean;
   type: "text" | "email" | "tel" | "password" | "url" | "date" | "number";
   placeholder?: string;
   value?: string | number | undefined;
@@ -40,7 +41,7 @@ const TextInput: Component<TextInputProps> = (props) => {
       description={props.description}
       required={props.required}
     >
-      <div class="flex flex-col max-w-40">
+      <div class="flex flex-col w-40">
         <input
           class={`input ${props.error ? "input-error" : ""}`}
           {...inputProps}
@@ -51,6 +52,7 @@ const TextInput: Component<TextInputProps> = (props) => {
           aria-errormessage={`${props.name}-error`}
           min={props.min}
           max={props.max}
+          disabled={props.disabled || false}
         />
         {props.error && (
           <div class="mt-1 text-error" id={`${props.name}-error`}>
