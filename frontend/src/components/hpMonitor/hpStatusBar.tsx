@@ -10,17 +10,17 @@ const HpStatusBar: Component<hpStatus> = (props) => {
     while (status.length > targetLength) {
       status.shift();
     }
-    status = status.map((val) => (val ? "up" : "down"));
+    status = status.map((val) => (val ? "bg-success" : "bg-error"));
 
     while (status.length < targetLength) {
-      status.unshift("none");
+      status.unshift("bg-base-300");
     }
     return status;
   };
   return (
-    <div class="hp-bar">
+    <div class="grid grid-cols-10 h-2">
       <For each={hpBar(props.hpList, 10)}>
-        {(item, index) => <div class={"hp-item " + item}></div>}
+        {(item, index) => <div class={`first:rounded-bl-lg last:rounded-br-lg  ${item}`}></div>}
       </For>
     </div>
   );

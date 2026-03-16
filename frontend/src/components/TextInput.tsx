@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import CardRow from "./CardRow";
+import CardListItem from "./CardListItem";
 import { JSX, splitProps } from "solid-js";
 
 export type TextInputProps = {
@@ -35,14 +35,14 @@ const TextInput: Component<TextInputProps> = (props) => {
   };
 
   return (
-    <CardRow
+    <CardListItem
       title={props.title || ""}
       description={props.description}
       required={props.required}
     >
-      <div class="input-wrapper">
+      <div class="flex flex-col">
         <input
-          class={`text-input ${props.error ? "error" : ""}`}
+          class={`input ${props.error ? "input-error" : ""}`}
           {...inputProps}
           id={props.name}
           value={props.value ?? ""}
@@ -53,12 +53,12 @@ const TextInput: Component<TextInputProps> = (props) => {
           max={props.max}
         />
         {props.error && (
-          <div class="text-error" id={`${props.name}-error`}>
+          <div class="mt-1 text-error" id={`${props.name}-error`}>
             {props.error}
           </div>
         )}
       </div>
-    </CardRow>
+    </CardListItem>
   );
 };
 

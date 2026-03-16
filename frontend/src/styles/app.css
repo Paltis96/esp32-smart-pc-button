@@ -1,0 +1,14 @@
+@import "solid-notifications/index.css";
+
+@import "tailwindcss";
+@plugin "daisyui";
+
+
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+  root: ":root";
+  include: ;
+  exclude: ;
+  prefix: ;
+  logs: true;
+}

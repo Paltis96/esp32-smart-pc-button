@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import CardRow from "./CardRow";
+import CardListItem from "./CardListItem";
 import Button from "./Button";
 export interface ButtonFieldProps {
   title: string;
@@ -13,8 +13,7 @@ export interface ButtonFieldProps {
 
 const ButtonField: Component<ButtonFieldProps> = (props) => {
   return (
-    <CardRow title={props.title} description={props.description}>
-      <div class="input-wrapper">
+    <CardListItem title={props.title} description={props.description}>
         <Button
           onClick={() => props.onClick()}
           label={props.label}
@@ -22,8 +21,7 @@ const ButtonField: Component<ButtonFieldProps> = (props) => {
           disabled={props.disabled || false}
           btn_type={props.btn_type}
         />
-      </div>
-    </CardRow>
+    </CardListItem>
   );
 };
 

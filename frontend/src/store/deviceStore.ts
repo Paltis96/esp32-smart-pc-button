@@ -99,7 +99,7 @@ const [DeviceProvider, useDevice] = createContextProvider(() => {
 
     }, 30000);
     onCleanup(() => { if (refreshTimer) clearInterval(refreshTimer) })
-    return { config, setConfig, refreshConfig, ping, device, espStatus, lastUpdate };
+    return { config, setConfig, refreshConfig, ping, device, espStatus, lastUpdate, firstInit };
 });
 
 export { DeviceProvider, useDevice }
