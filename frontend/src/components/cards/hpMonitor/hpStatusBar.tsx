@@ -18,9 +18,9 @@ const HpStatusBar: Component<hpStatus> = (props) => {
     return status;
   };
   return (
-    <div class="grid grid-cols-10 h-2">
+    <div class="grid grid-cols-10 h-4 gap-1">
       <For each={hpBar(props.hpList, 10)}>
-        {(item, index) => <div class={`first:rounded-bl-lg last:rounded-br-lg  ${item}`}></div>}
+        {(item, index) => <div class={`rounded-sm  ${item}`}></div>}
       </For>
     </div>
   );

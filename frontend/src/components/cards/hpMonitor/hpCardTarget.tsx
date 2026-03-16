@@ -1,13 +1,14 @@
 import { type Component } from "solid-js";
 import HpStatusBar from "./hpStatusBar";
-import Badge from "../Badge";
+import Badge from "../../Badge";
+import CardBase from "../CardBase";
 interface CardProps {
   name?: string;
   url?: string;
   hpList?: boolean[];
 }
 
-const HpCard: Component<CardProps> = (props) => {
+const HpCardTarget: Component<CardProps> = (props) => {
   const hpStatus = () => {
     if (props.hpList?.length == 0 || !props.hpList) return "none";
     return props.hpList[props.hpList.length - 1] ? "Up" : "Down";
@@ -25,21 +26,23 @@ const HpCard: Component<CardProps> = (props) => {
     }
   };
   return (
-    <div class="card dark:bg-neutral shadow-sm">
+    <div class="card bg-base-100 shadow-sm h-25">
       <div class="card-body">
         <div class="flex justify-between">
           <div>
-            <h2 class="text-2xl font-bold">{props.name}</h2>
-            <span> {props.url || ""} </span>
+            <h2 class="text-lg font-semibold">{props.name}</h2>
+            <span class="opacity-60"> {props.url || ""} </span>
           </div>
-          <span class="text-xl">
-            <Badge type={bageType(hpStatus())}>{hpStatus()}</Badge>
-          </span>
+          <div class="flex flex-col w-20 gap-2">
+            <div class="self-end">
+              <Badge type={bageType(hpStatus())}>{hpStatus()}</Badge>
+            </div>
+            <HpStatusBar hpList={props.hpList || []} />
+          </div>
         </div>
       </div>
-      <HpStatusBar hpList={props.hpList || []} />
     </div>
   );
 };
 
-export default HpCard;
+export default HpCardTarget;

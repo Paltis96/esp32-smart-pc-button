@@ -1,6 +1,5 @@
 import { Match, Switch, type Component } from "solid-js";
 import Alert from "./Alert";
-import { LoadingLoop } from "./Loader";
 import { useDevice } from "../store/deviceStore";
 
 const Preloader: Component = (props) => {

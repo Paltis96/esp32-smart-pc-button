@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import CardListItem from "./CardListItem";
+import CardListItem from "./cards/CardListItem";
 import Button from "./Button";
 export interface ButtonFieldProps {
   title: string;

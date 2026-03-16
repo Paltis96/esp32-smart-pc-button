@@ -1,5 +1,5 @@
 import { splitProps, type Component, type JSX, createUniqueId } from "solid-js";
-import CardListItem from "./CardListItem";
+import CardListItem from "./cards/CardListItem";
 
 type SwitchInputProps = {
   name: string;

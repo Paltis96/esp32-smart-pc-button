@@ -28,8 +28,8 @@ const ConfigurationPage: Component = () => {
   };
   return (
     <>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 m-2">
-        <div class="col-span-1 col-start-1 md:col-span-2  md:col-start-2">
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-4 m-2">
+        <div class="col-span-1 col-start-1 md:col-span-4 md:col-start-2">
           <Show when={ctx?.config.data}>
             <ConfigCardGeneral
               initialData={ctx?.config!.data!}

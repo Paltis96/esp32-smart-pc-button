@@ -6,8 +6,6 @@ import ConfigurationPage from "./pages/Configuration";
 import NavBar from "./components/NavBar";
 
 import { DeviceProvider, useDevice } from "./store/deviceStore";
-import Alert from "./components/Alert";
-import { LoadingLoop } from "./components/Loader";
 import Preloader from "./components/Preloader";
 
 const options = [
@@ -24,15 +22,16 @@ const App: Component = () => {
         <ToastProvider theme="dark" offsetY={64}>
           <Toaster />
 
-      
           <Show when={selectedPage() !== 3}>
             <NavBar
               tabs={options}
               onTabSelect={(value) => setSelectedPage(value)}
             />
           </Show>
-          <Preloader/>
-          <Dynamic component={options[selectedPage()].value} />
+          <div class="container mx-auto">
+            <Preloader />
+            <Dynamic component={options[selectedPage()].value} />
+          </div>
         </ToastProvider>
       </DeviceProvider>
     </>
