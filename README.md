@@ -1,8 +1,7 @@
 # ESP32 Smart PC Power Button
 
 An ESP32-based device that simulates a PC power button, allowing
-remote control and automatic startup after power outages via
-Web UI, REST API, or Home Assistant.
+remote control and automatic startup after power outages.
 
 # Features
 
@@ -228,6 +227,7 @@ Planned ideas and possible future enhancements:
 
 - Wi-Fi setup mode (initial configuration through a temporary access point)
 - Wi-Fi reset functionality to clear saved credentials and re-enter setup mode
+- Add the ability to configure multiple devices for control.
 - Allow monitoring **multiple network devices** simultaneously
 - Add **MQTT support** for deeper Home Assistant integration
 - Improve **network monitoring logic** (custom intervals, retries, thresholds)
