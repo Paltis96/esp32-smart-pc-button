@@ -95,11 +95,12 @@ class PowerController:
         host_online = await self._tcp_ping(str(self._config.host_ip))
         await asyncio.sleep(0.01)
         target_online = await self._tcp_ping(str(self._config.target_ip))
+        
         hs = 'up' if host_online else 'down'
         ts = 'up' if target_online else 'down'
 
-        if not host_online:
-            logger.info(f"Host: {hs} | Target: {ts}")
+        
+        logger.info(f"Host: {hs} | Target: {ts}")
             
         self._push_state(self.host_history, host_online)
         self._push_state(self.target_history, target_online)
