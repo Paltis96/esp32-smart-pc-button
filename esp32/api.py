@@ -71,7 +71,7 @@ async def config(request):
 
 @app.get('/api/signal')
 async def signal(request):
-    controller.trigger_switch()
+    await controller.trigger_switch()
     return json_response(message='Signal triggered successfully', status_code=200)
 
 
