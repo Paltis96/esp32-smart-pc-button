@@ -23,7 +23,7 @@ remote control and automatic startup after power outages.
 - [Quick Start](#quick-start)
 - [Installation](#installation)
   - [1. Flash MicroPython](#1-flash-micropython)
-  - [2. Build the Web UI](#2-build-the-web-ui)
+  - [2. Download code](#2-download-code)
   - [3. Upload Firmware to ESP32](#3-upload-firmware-to-esp32)
   - [4. Configure Settings](#4-configure-settings)
   - [5. Run the Device](#5-run-the-device)
@@ -99,7 +99,7 @@ physical power button on the motherboard.
 # Quick Start
 
 1. Flash **MicroPython** to the ESP32-C3.
-2. Build the frontend.
+2. Download latest available version on [Releases page](https://github.com/Paltis96/esp32-smart-pc-button/releases).
 3. Upload the contents of the `esp32` directory to the device.
 4. Edit `esp32/settings.py` and set your Wi-Fi credentials.
 5. Restart the ESP32.
@@ -121,29 +121,9 @@ You can flash it using **esptool** or:
 https://adafruit.github.io/Adafruit_WebSerial_ESPTool/
 
 
-## 2. Build the Web UI
+## 2. Download code
 
-Navigate to the frontend directory:
-
-``` bash
-cd frontend
-```
-
-Install dependencies:
-
-``` bash
-npm install
-```
-
-Build the frontend:
-
-``` bash
-npm run build
-```
-
-The production build will be placed in:
-
-    esp32/static
+The latest available version can be found on the [Releases page](https://github.com/Paltis96/esp32-smart-pc-button/releases).
 
 
 ## 3. Upload Firmware to ESP32

@@ -16,12 +16,12 @@ const options = [
 const [selectedPage, setSelectedPage] = createSignal(0);
 
 const App: Component = () => {
+
   return (
     <>
       <DeviceProvider>
         <ToastProvider theme="dark" offsetY={64}>
           <Toaster />
-
           <Show when={selectedPage() !== 3}>
             <NavBar
               tabs={options}

@@ -1,0 +1,40 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+      
+permissions:
+  contents: write
+  
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm install
+          export VITE_APP_VERSION=$(git describe --tags --abbrev=0)
+          npm run build
+
+
+      - name: Package Backend
+        run: |
+          zip -r release-package.zip esp32/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-package.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
