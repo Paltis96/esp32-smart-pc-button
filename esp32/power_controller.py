@@ -106,14 +106,16 @@ class PowerController:
                 logger.info('Triggering a host to wake up...')
                 await self.trigger_switch()
                                 
-                self._power_retry += 1
                 msg = f"Power On Retry: {self._power_retry} / {self._config.power_retry_limit}"
                 logger.info(msg)
-                
+                if self._power_retry > 0:
+                    self._massage = msg
+
                 self.set_delay(self._config.retry_delay_s)
-                self._massage = msg
                 logger.info(f"Next retry in {self._config.retry_delay_s}s")
                 
+                self._power_retry += 1
+
     def status(self):
         data = {"host_history": self.host_history,
                 "target_history": self.target_history,
