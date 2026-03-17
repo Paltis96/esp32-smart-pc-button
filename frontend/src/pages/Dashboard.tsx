@@ -20,6 +20,7 @@ import HpCardHost from "../components/cards/hpMonitor/hpCardHost";
 
 const DashboardPage: Component = () => {
   const ctx = useDevice();
+  const version = import.meta.env.VITE_APP_VERSION || "dev-build";
 
   const [rebootLoading, setRebootLoading] = createSignal(false);
   const [signalLoading, setSignalLoading] = createSignal(false);
@@ -162,6 +163,9 @@ const DashboardPage: Component = () => {
               </div>
               <Show when={ctx?.device.data}>
                 <CardList>
+                  <CardListItem title="App Version">
+                    <div class="text-md opacity-60">{version}</div>
+                  </CardListItem>
                   <CardListItem title="Last Update">
                     <div class="text-md opacity-60">
                       {ctx?.lastUpdate() || ""}
