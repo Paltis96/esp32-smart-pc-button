@@ -5,8 +5,7 @@ from settings import conf_general
 from power_controller import controller
 from api import app
 from machine import WDT
-from wifi_manager import ensure_wifi
-from settings import ssid, password
+from wifi_manager import ensure_wifi, get_wifi_credentials
 
 # Startup delay.
 time.sleep(5)
@@ -51,8 +50,9 @@ async def background_task():
 
 
 async def main():
+    ssid, pwd = get_wifi_credentials()
     while True:
-        if ensure_wifi(ssid, password):
+        if ensure_wifi(ssid, pwd):
             tasks = [
                 asyncio.create_task(guarded_task(
                     background_task, "Controller", conf_general.heartbeat_interval_s)),

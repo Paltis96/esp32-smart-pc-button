@@ -5,11 +5,6 @@ from machine import Pin
 # GPIO pin connected to optocoupler
 s_pin = 4
 
-# WiFi credentials
-ssid = "YOUR_WIFI"
-password = "YOUR_PASSWORD"
-
-
 ALLOWED_KEYS = (
     "host_ip",
     "target_ip",
@@ -17,8 +12,8 @@ ALLOWED_KEYS = (
     "auto_power_on",
     "retry_delay_s",
     'status_sample_size'
-    'history_limit'
 )
+
 
 
 def dump_config_json(data=None):
@@ -30,7 +25,6 @@ def dump_config_json(data=None):
             "heartbeat_interval_s": 60,
             'retry_delay_s': 120,
             'status_sample_size': 3,
-            'history_limit': 10
         }
 
     with open('./config.json', 'w') as f:
@@ -81,7 +75,6 @@ class GeneralConfig:
         self.heartbeat_interval_s = config.get("heartbeat_interval_s", 10)
         self.retry_delay_s = config.get("retry_delay_s", 120)
         self.status_sample_size = config.get("status_sample_size", 3)
-        self.history_limit = config.get("history_limit", 10)
 
     def update(self, config):
         hl = config.get("history_limit")

@@ -2,6 +2,15 @@ import network
 import time
 
 
+def get_wifi_credentials():
+    with open('wifi.txt', 'r', encoding='utf-8') as f:
+        lines = f.read().splitlines()
+        
+        wifi_name = lines[0].strip()
+        wifi_pass = lines[1].strip()
+        return  wifi_name, wifi_pass
+
+
 def ensure_wifi(ssid, password):
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)

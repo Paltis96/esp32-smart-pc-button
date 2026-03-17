@@ -9,6 +9,7 @@ class PowerController:
                  config,
                  pin=4,
                  pulse_s=1,
+                 history_limit=10
                  ):
 
         self._config = config
@@ -20,7 +21,7 @@ class PowerController:
         self._targer_status = False
         self._pulse_s = pulse_s
         self._next_allowed_trigger_time = 0
-
+        self._history_limit = history_limit
     @property
     def host_status(self):
         return self._state
@@ -55,7 +56,7 @@ class PowerController:
 
     def _push_state(self, history, state):
         history.append(state)
-        if len(history) > self._config.history_limit:
+        if len(history) > self._history_limit:
             history.pop(0)
 
     def _is_all_true(self, history) -> bool:
