@@ -1,4 +1,6 @@
 @import "solid-notifications/index.css";
 
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+   themes:  dark --default;
+}

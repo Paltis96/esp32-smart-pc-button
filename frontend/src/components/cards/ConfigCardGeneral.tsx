@@ -20,6 +20,8 @@ type GeneralConfigForm = {
   heartbeat_interval_s: number;
   status_sample_size: number;
   retry_delay_s: number;
+  allow_power_retry_limit: boolean;
+  power_retry_limit: number;
 };
 
 type FormProps = {
@@ -34,6 +36,7 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
   const powerOn = () =>
     getValues(GeneralConfig, ["auto_power_on"]).auto_power_on;
 
+
   const handleSubmit: SubmitHandler<GeneralConfigForm> = async (
     values,
     event,
@@ -43,10 +46,13 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
 
   return (
     <CardBase>
-      <div class="flex mb-6">
-        <h2 class="text-xl font-semibold">General</h2>
-      </div>
       <GForm onSubmit={handleSubmit}>
+        <div class="flex mb-6 justify-between items-center">
+          <h2 class="text-xl font-semibold">General</h2>
+          <div class="">
+            <Button type="submit" btn_type="btn-primary" label="Save" />
+          </div>
+        </div>
         <CardList>
           <GField name="auto_power_on" type="boolean">
             {(field, props) => (
@@ -128,24 +134,26 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
             <GField
               name="retry_delay_s"
               type="number"
+              validate={[required("Enter the value.")]}
             >
               {(field, props) => (
                 <TextInput
                   {...props}
                   value={field.value}
                   type="number"
-                  min="60"
+                  min="1"
                   placeholder="120"
                   error={field.error}
-                  title="retry_delay_s"
-                  description=""
-                  disabled
+                  title="Power Retry Delay"
+                  description="Time in seconds to wait before sending another power signal if the PC did not turn on."
+                  required
                 />
               )}
             </GField>
             <GField
               name="status_sample_size"
               type="number"
+              validate={[required("Enter the value.")]}
             >
               {(field, props) => (
                 <TextInput
@@ -156,17 +164,42 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
                   max="10"
                   placeholder="1"
                   error={field.error}
-                  title="status_sample_size"
-                  description=""
-                  disabled
+                  title="Status Check Count"
+                  description="Number of consecutive checks used to confirm whether the device is online or offline."
+                  required
                 />
               )}
             </GField>
+            <GField name="allow_power_retry_limit" type="boolean">
+              {(field, props) => (
+                <SwitchField
+                  {...props}
+                  value={field.value || false}
+                  error={field.error}
+                  title="Power On Retry Limit"
+                />
+              )}
+            </GField>
+              <GField
+                name="power_retry_limit"
+                type="number"
+                validate={[required("Enter the value.")]}
+              >
+                {(field, props) => (
+                  <TextInput
+                    {...props}
+                    value={field.value}
+                    type="number"
+                    min="1"
+                    placeholder="1"
+                    error={field.error}
+                    title="Retry Limit"
+                    required
+                  />
+                )}
+              </GField>
           </Show>
         </CardList>
-        <div class="mt-6 card-actions justify-end">
-          <Button type="submit" btn_type="contained" label="Save" />
-        </div>
       </GForm>
     </CardBase>
   );

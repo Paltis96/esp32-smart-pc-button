@@ -51,7 +51,7 @@ const [DeviceProvider, useDevice] = createContextProvider(() => {
     });
     const [ping, setPing] = createStore<GenericStore>({
         loading: true,
-        data: { host_history: [], target_history: [] },
+        data: { host_history: [], target_history: [], massage: '' },
         status: undefined,
         message: undefined
     });
@@ -62,44 +62,47 @@ const [DeviceProvider, useDevice] = createContextProvider(() => {
         message: undefined
     });
 
-    createEffect(() => {
+    const cleanPingMsg = () => {
+      setPing("data", "massage", "");
+    }
+createEffect(() => {
 
-        if (pingData.loading && firstInit()) {
-            setEspStatus("Connecting")
-        }
-        else if (pingData.loading && !firstInit()) {
-            setEspStatus('Refreshing')
-        }
-        else if (pingData.error) {
-            setEspStatus("Disconnected")
-            setFirstInit(false)
-        }
-        else if (pingData()) {
-            setEspStatus("Connected")
-            setFirstInit(false)
+    if (pingData.loading && firstInit()) {
+        setEspStatus("Connecting")
+    }
+    else if (pingData.loading && !firstInit()) {
+        setEspStatus('Refreshing')
+    }
+    else if (pingData.error) {
+        setEspStatus("Disconnected")
+        setFirstInit(false)
+    }
+    else if (pingData()) {
+        setEspStatus("Connected")
+        setFirstInit(false)
 
-        }
+    }
 
-        fetchData(setConfig, configData)
-        fetchData(setPing, pingData)
-        fetchData(setDevice, devicegData)
+    fetchData(setConfig, configData)
+    fetchData(setPing, pingData)
+    fetchData(setDevice, devicegData)
 
-        setLastUpdate(new Date().toLocaleTimeString())
-    });
+    setLastUpdate(new Date().toLocaleTimeString())
+});
 
-    let refreshTimer: any | undefined
+let refreshTimer: any | undefined
 
-    refreshTimer = setInterval(() => {
+refreshTimer = setInterval(() => {
 
-        if (config.status === 'error') refreshConfig()
-        refreshPing()
-        refreshDevice()
-        setLastUpdate(new Date().toLocaleTimeString())
+    if (config.status === 'error') refreshConfig()
+    refreshPing()
+    refreshDevice()
+    setLastUpdate(new Date().toLocaleTimeString())
 
 
-    }, 30000);
-    onCleanup(() => { if (refreshTimer) clearInterval(refreshTimer) })
-    return { config, setConfig, refreshConfig, ping, device, espStatus, lastUpdate, firstInit };
+}, 30000);
+onCleanup(() => { if (refreshTimer) clearInterval(refreshTimer) })
+return { config, setConfig, refreshConfig, ping, device, espStatus, lastUpdate, firstInit, cleanPingMsg };
 });
 
 export { DeviceProvider, useDevice }

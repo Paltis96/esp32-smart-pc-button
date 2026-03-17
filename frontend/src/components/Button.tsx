@@ -1,5 +1,4 @@
 import type { Component } from "solid-js";
-import { LoadingLoop } from "./Loader";
 
 const Button: Component<{
   onClick?: () => void;
@@ -11,7 +10,7 @@ const Button: Component<{
 }> = (props) => {
   return (
     <button
-      class={`btn btn-accent ${props.btn_type}`}
+      class={`btn btn-sm ${props.btn_type}`}
       onClick={props.onClick}
       type={props.type}
       disabled={props.disabled || false}

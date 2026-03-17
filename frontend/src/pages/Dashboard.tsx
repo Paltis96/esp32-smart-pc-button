@@ -17,6 +17,7 @@ import CardListItem from "../components/cards/CardListItem";
 import CardBase from "../components/cards/CardBase";
 import CardList from "../components/cards/CardList";
 import HpCardHost from "../components/cards/hpMonitor/hpCardHost";
+import Button from "../components/Button";
 
 const DashboardPage: Component = () => {
   const ctx = useDevice();
@@ -47,6 +48,11 @@ const DashboardPage: Component = () => {
     } finally {
       setSignalLoading(false);
     }
+  };
+
+  const clearRerty = () => {
+    api.retryClear();
+    ctx?.cleanPingMsg();
   };
 
   const deviceRam = () => {
@@ -107,6 +113,17 @@ const DashboardPage: Component = () => {
                   url={ctx?.config.data?.host_ip}
                   hpList={ctx?.ping.data.host_history}
                 >
+                  <Show when={ctx?.ping.data.massage}>
+                    <Alert type="alert-warning">
+                      <div></div>
+                      <div class="font-semibold">{ctx?.ping.data.massage}</div>
+                      <Button
+                        onClick={() => clearRerty()}
+                        label="Clear Counter"
+                        btn_type="btn-ghost btn-warning"
+                      />
+                    </Alert>
+                  </Show>
                   <HpCardTarget
                     name="Network Device"
                     url={ctx?.config.data?.target_ip}
@@ -138,8 +155,8 @@ const DashboardPage: Component = () => {
                   label="Press"
                   loading={signalLoading()}
                   onClick={handleSignal}
-                  btn_type="btn-ghost"
                   disabled={signalLoading()}
+                  btn_type="btn-primary"
                 />
                 <ButtonField
                   title="Reboot ESP32"
@@ -148,7 +165,7 @@ const DashboardPage: Component = () => {
                   loading={rebootLoading()}
                   onClick={handleReboot}
                   disabled={rebootLoading()}
-                  btn_type="btn-ghost"
+                  btn_type="btn-primary"
                 />
               </CardList>
             </CardBase>

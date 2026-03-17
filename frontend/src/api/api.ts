@@ -51,6 +51,7 @@ export const api = {
   getPingStat: () =>
     request<Responce>('/ping_status')
   ,
+  retryClear: () => request('/retry_clear'),
   updateConfig: (data: Partial<AppConfig>) =>
     request<Responce>('/config', {
       method: 'PUT',
