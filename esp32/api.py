@@ -69,14 +69,19 @@ async def config(request):
             return json_response(message=err, status='error', status_code=400)
 
 
+@app.get('/api/retry_clear')
+async def retry_reset(request):
+    controller.reset_retry_counter()
+    controller.clear_massage()
+    return json_response(message='ok', status_code=200)
+
 @app.get('/api/signal')
 async def signal(request):
     await controller.trigger_switch()
     return json_response(message='Signal triggered successfully', status_code=200)
 
-
 @app.get('/api/ping_status')
-async def signal(request):
+async def ping_status(request):
     return json_response(message="ok", data=controller.status(), status_code=200)
 
 
@@ -88,7 +93,7 @@ async def reboot(request):
 
 
 @app.get('/api/sys/info')
-async def reboot(request):
+async def info(request):
     return json_response(message="ok", data=get_system_stats(), status_code=200)
 
 @app.route('/api/sys/logs')

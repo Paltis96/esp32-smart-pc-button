@@ -17,6 +17,8 @@ def dump_config_json(data=None):
             "heartbeat_interval_s": 60,
             'retry_delay_s': 120,
             'status_sample_size': 3,
+            'allow_power_retry_limit':True,
+            'power_retry_limit': 3
         }
 
     with open('./config.json', 'w') as f:
@@ -51,7 +53,9 @@ class GeneralConfig:
                  "s_pin",
                  'retry_delay_s',
                  'status_sample_size',
-                 'history_limit'
+                 'history_limit',
+                 'allow_power_retry_limit',
+                 'power_retry_limit'
                  )
     _instance = None
 
@@ -67,6 +71,8 @@ class GeneralConfig:
         self.heartbeat_interval_s = config.get("heartbeat_interval_s", 10)
         self.retry_delay_s = config.get("retry_delay_s", 120)
         self.status_sample_size = config.get("status_sample_size", 3)
+        self.allow_power_retry_limit = config.get("allow_power_retry_limit", True)
+        self.power_retry_limit = config.get("power_retry_limit", 3)
 
     def update(self, config):              
         for key in config:

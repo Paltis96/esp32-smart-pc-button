@@ -21,8 +21,9 @@ class PowerController:
         self._pulse_s = pulse_s
         self._next_allowed_trigger_time = 0
         self._history_limit = history_limit
-   
-
+        self._power_retry = 0
+        self._massage = None
+        
     async def _tcp_check(self, host, port=80, timeout=2):
         try:
             logger.debug(f"Ping: {host}")
@@ -42,7 +43,7 @@ class PowerController:
 
     def _stable_state(self, history):
         if len(history) < self._config.status_sample_size:
-            return False
+            return None
         return all(history[-self._config.status_sample_size:])
 
     async def trigger_switch(self):
@@ -54,7 +55,12 @@ class PowerController:
     def set_delay(self, delay_s):
         self._next_allowed_trigger_time = time() + delay_s
 
+    def clear_massage(self):
+        self._massage = None
 
+    def reset_retry_counter(self):
+        self._power_retry = 0
+    
     async def tick(self):
         now = time()
 
@@ -81,16 +87,37 @@ class PowerController:
         host_stable = self._stable_state(self.host_history)
         target_stable = self._stable_state(self.target_history)
         
+        if host_stable is None or target_stable is None:
+            return
+        
+        if self._config.allow_power_retry_limit:
+            # clear rerty count if host online and stable
+            if host_online:
+                logger.info("Host back online, resetting retry counter.")
+                self.reset_retry_counter()
+                self.clear_massage()
+                
+            if self._power_retry >= self._config.power_retry_limit:
+                return
+        
+        
         if not host_stable and target_stable:
             if now >= self._next_allowed_trigger_time:
                 logger.info('Triggering a host to wake up...')
                 await self.trigger_switch()
+                                
+                self._power_retry += 1
+                msg = f"Power On Retry: {self._power_retry} / {self._config.power_retry_limit}"
+                logger.info(msg)
+                
                 self.set_delay(self._config.retry_delay_s)
+                self._massage = msg
                 logger.info(f"Next retry in {self._config.retry_delay_s}s")
                 
     def status(self):
         data = {"host_history": self.host_history,
                 "target_history": self.target_history,
+                "massage": self._massage
                 }
         return data
 
