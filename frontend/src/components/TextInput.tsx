@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import CardRow from "./CardRow";
+import CardListItem from "./cards/CardListItem";
 import { JSX, splitProps } from "solid-js";
 
 export type TextInputProps = {
@@ -8,6 +8,7 @@ export type TextInputProps = {
   description?: string;
   min?: string;
   max?: string;
+  disabled?: boolean;
   type: "text" | "email" | "tel" | "password" | "url" | "date" | "number";
   placeholder?: string;
   value?: string | number | undefined;
@@ -35,14 +36,14 @@ const TextInput: Component<TextInputProps> = (props) => {
   };
 
   return (
-    <CardRow
+    <CardListItem
       title={props.title || ""}
       description={props.description}
       required={props.required}
     >
-      <div class="input-wrapper">
+      <div class="flex flex-col w-40">
         <input
-          class={`text-input ${props.error ? "error" : ""}`}
+          class={`input ${props.error ? "input-error" : ""}`}
           {...inputProps}
           id={props.name}
           value={props.value ?? ""}
@@ -51,14 +52,15 @@ const TextInput: Component<TextInputProps> = (props) => {
           aria-errormessage={`${props.name}-error`}
           min={props.min}
           max={props.max}
+          disabled={props.disabled || false}
         />
         {props.error && (
-          <div class="text-error" id={`${props.name}-error`}>
+          <div class="mt-1 text-error" id={`${props.name}-error`}>
             {props.error}
           </div>
         )}
       </div>
-    </CardRow>
+    </CardListItem>
   );
 };
 

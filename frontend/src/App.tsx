@@ -1,11 +1,12 @@
-import { createSignal, Show, type Component } from "solid-js";
+import { createSignal, Match, Show, Switch, type Component } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { ToastProvider, Toaster } from "solid-notifications";
 import DashboardPage from "./pages/Dashboard";
 import ConfigurationPage from "./pages/Configuration";
 import NavBar from "./components/NavBar";
 
-import { DeviceProvider } from "./store/deviceStore";
+import { DeviceProvider, useDevice } from "./store/deviceStore";
+import Preloader from "./components/Preloader";
 
 const options = [
   { label: "Dashboard", value: DashboardPage },
@@ -27,7 +28,10 @@ const App: Component = () => {
               onTabSelect={(value) => setSelectedPage(value)}
             />
           </Show>
-          <Dynamic component={options[selectedPage()].value} />
+          <div class="max-w-5xl mx-auto pt-16">
+            <Preloader />
+            <Dynamic component={options[selectedPage()].value} />
+          </div>
         </ToastProvider>
       </DeviceProvider>
     </>

@@ -2,6 +2,7 @@ import machine
 from settings import conf_general, s_pin
 from time import time, sleep
 import asyncio
+from logging import logger
 
 
 class PowerController:
@@ -9,54 +10,30 @@ class PowerController:
                  config,
                  pin=4,
                  pulse_s=1,
-                 retry_delay_s=120,
-                 history_limit=10,
-                 status_sample_size=3
+                 history_limit=10
                  ):
 
         self._config = config
         self._pin = machine.Pin(pin, machine.Pin.OUT)
 
         self.host_history = []
-        self._host_status = False
         self.target_history = []
-        self._targer_status = False
-        self._history_limit = history_limit
-        self._retry_delay_s = retry_delay_s
-        self._status_sample_size = status_sample_size
         self._pulse_s = pulse_s
         self._next_allowed_trigger_time = 0
-
-    @property
-    def host_status(self):
-        return self._state
-
-    @host_status.setter
-    def host_status(self, value):
-        if not isinstance(value, bool):
-            raise ValueError(f"Invalid state '{value}'.")
-        self._host_status = value
-
-    @property
-    def targer_status(self):
-        return self._state
-
-    @targer_status.setter
-    def targer_status(self, value):
-        if not isinstance(value, bool):
-            raise ValueError(f"Invalid state '{value}'.")
-        self.targer_status = value
-
-    async def _tcp_ping(self, host, port=80, timeout=2):
+        self._history_limit = history_limit
+        self._power_retry = 0
+        self._massage = None
+        
+    async def _tcp_check(self, host, port=80, timeout=2):
         try:
-            print(f"Ping: {host}")
+            logger.debug(f"Ping: {host}")
             conn = asyncio.open_connection(host, port)
             reader, writer = await asyncio.wait_for(conn, timeout=timeout)
             writer.close()
             await writer.wait_closed()
             return True
         except Exception as e:
-            print(f"Ping error: {e}")
+            logger.warning(f"Ping error: {e}")
             return False
 
     def _push_state(self, history, state):
@@ -64,49 +41,83 @@ class PowerController:
         if len(history) > self._history_limit:
             history.pop(0)
 
-    def _is_all_true(self, history) -> bool:
-        slice_list = self._status_sample_size * -1
-        history_sample = history[slice_list:]
-        if len(history_sample) < self._status_sample_size:
-            return False
-        return all(history_sample)
+    def _stable_state(self, history):
+        if len(history) < self._config.status_sample_size:
+            return None
+        return all(history[-self._config.status_sample_size:])
 
-    def trigger_switch(self):
+    async def trigger_switch(self):
         self._pin.on()
-        sleep(self._pulse_s)
+        await asyncio.sleep(self._pulse_s)
         self._pin.off()
-        print("Power signal sent")
+        logger.info("Power signal sent")
 
     def set_delay(self, delay_s):
         self._next_allowed_trigger_time = time() + delay_s
 
+    def clear_massage(self):
+        self._massage = None
+
+    def reset_retry_counter(self):
+        self._power_retry = 0
+    
     async def tick(self):
         now = time()
 
         if not self._config.host_ip:
-            print('Host IP address not set.')
+            logger.warning('Host IP address not set.')
             return
 
         if not self._config.target_ip:
-            print('Target IP address not set.')
+            logger.warning('Target IP address not set.')
             return
 
-        host_online = await self._tcp_ping(str(self._config.host_ip))
+        host_online = await self._tcp_check(str(self._config.host_ip))
         await asyncio.sleep(0.01)
-        target_online = await self._tcp_ping(str(self._config.target_ip))
-
+        target_online = await self._tcp_check(str(self._config.target_ip))
+        
+        hs = 'up' if host_online else 'down'
+        ts = 'up' if target_online else 'down'
+        
+        logger.info(f"Host {self._config.host_ip}: {hs} | Target {self._config.target_ip}: {ts}")
+        
         self._push_state(self.host_history, host_online)
         self._push_state(self.target_history, target_online)
-
-        if not host_online and self._is_all_true(self.target_history):
+        
+        host_stable = self._stable_state(self.host_history)
+        target_stable = self._stable_state(self.target_history)
+        
+        if host_stable is None or target_stable is None:
+            return
+        
+        if self._config.allow_power_retry_limit:
+            # clear rerty count if host online and stable
+            if host_online:
+                logger.info("Host back online, resetting retry counter.")
+                self.reset_retry_counter()
+                self.clear_massage()
+                
+            if self._power_retry >= self._config.power_retry_limit:
+                return
+        
+        
+        if not host_stable and target_stable:
             if now >= self._next_allowed_trigger_time:
-                print('Triggering a host to wake up...')
-                self.trigger_switch()
-                self._next_allowed_trigger_time = now + self._retry_delay_s
-
+                logger.info('Triggering a host to wake up...')
+                await self.trigger_switch()
+                                
+                self._power_retry += 1
+                msg = f"Power On Retry: {self._power_retry} / {self._config.power_retry_limit}"
+                logger.info(msg)
+                
+                self.set_delay(self._config.retry_delay_s)
+                self._massage = msg
+                logger.info(f"Next retry in {self._config.retry_delay_s}s")
+                
     def status(self):
         data = {"host_history": self.host_history,
                 "target_history": self.target_history,
+                "massage": self._massage
                 }
         return data
 

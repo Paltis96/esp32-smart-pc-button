@@ -8,6 +8,7 @@ from microdot.cors import CORS
 from settings import conf_general
 from power_controller import controller
 from sys_info import get_system_stats
+from logging import logger
 
 
 app = Microdot()
@@ -60,19 +61,27 @@ async def config(request):
             return json_response(message='Content-Type must be application/json', status='error', status_code=400)
 
         data = request.json
-        print(data)
-        conf_general.update(data)
-        return json_response(message='Configuration updated successfully', data=data)
+        logger.info(data)
+        try:
+            conf_general.update(data)
+            return json_response(message='Configuration updated successfully', data=data)
+        except Exception as err:
+            return json_response(message=err, status='error', status_code=400)
 
+
+@app.get('/api/retry_clear')
+async def retry_reset(request):
+    controller.reset_retry_counter()
+    controller.clear_massage()
+    return json_response(message='ok', status_code=200)
 
 @app.get('/api/signal')
 async def signal(request):
-    controller.trigger_switch()
+    await controller.trigger_switch()
     return json_response(message='Signal triggered successfully', status_code=200)
 
-
 @app.get('/api/ping_status')
-async def signal(request):
+async def ping_status(request):
     return json_response(message="ok", data=controller.status(), status_code=200)
 
 
@@ -84,10 +93,9 @@ async def reboot(request):
 
 
 @app.get('/api/sys/info')
-async def reboot(request):
+async def info(request):
     return json_response(message="ok", data=get_system_stats(), status_code=200)
 
-
-@app.errorhandler(404)
-async def not_found(request):
-    return json_response(message='Resource not found', status='error', status_code=404)
+@app.route('/api/sys/logs')
+def logs(request):
+    return send_file('app_log.txt', content_type='text/plain')

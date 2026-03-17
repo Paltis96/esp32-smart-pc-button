@@ -1,7 +1,8 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
 import "solid-devtools";
-import "./styles/index.css";
+import "./styles/app.css";
+
 import App from "./App";
 
 const root = document.getElementById("root");

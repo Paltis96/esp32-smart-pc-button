@@ -1,5 +1,5 @@
 import { splitProps, type Component, type JSX, createUniqueId } from "solid-js";
-import CardRow from "./CardRow";
+import CardListItem from "./cards/CardListItem";
 
 type SwitchInputProps = {
   name: string;
@@ -29,15 +29,15 @@ const SwitchField: Component<SwitchInputProps> = (props) => {
   ]);
 
   return (
-    <CardRow
+    <CardListItem
       title={local.title || ''}
       description={local.description}
       required={local.required}
     >
-      <div class="input-wrapper">
+      <div class="flex items-center">
         <input
           {...inputProps}
-          class="switch-input"
+          class="toggle"
           type="checkbox"
           id={id}
           name={local.name} 
@@ -45,7 +45,6 @@ const SwitchField: Component<SwitchInputProps> = (props) => {
           aria-invalid={!!local.error}
           aria-describedby={local.error ? errorId : undefined}
         />
-        <label class="switch-label" for={id}></label>
 
         {local.error && (
           <div id={errorId} class="error-text">
@@ -53,7 +52,7 @@ const SwitchField: Component<SwitchInputProps> = (props) => {
           </div>
         )}
       </div>
-    </CardRow>
+    </CardListItem>
   );
 };
 

@@ -1,5 +1,4 @@
 import type { Component } from "solid-js";
-import { LoadingLoop } from "./Loader";
 
 const Button: Component<{
   onClick?: () => void;
@@ -11,13 +10,16 @@ const Button: Component<{
 }> = (props) => {
   return (
     <button
-      class={`primary-button ${props.btn_type || "contained"}`}
+      class={`btn btn-sm ${props.btn_type}`}
       onClick={props.onClick}
       type={props.type}
       disabled={props.disabled || false}
     >
-
-      {props.loading ?<LoadingLoop width="16px" height="16px" /> : props.label}
+      {props.loading ? (
+        <span class="loading loading-spinner"></span>
+      ) : (
+        props.label
+      )}
     </button>
   );
 };

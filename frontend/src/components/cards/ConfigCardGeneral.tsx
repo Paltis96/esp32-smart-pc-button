@@ -1,26 +1,27 @@
-import {
-  Show,
-  type Component,
-} from "solid-js";
+import { Show, type Component } from "solid-js";
 import {
   createForm,
   required,
   SubmitHandler,
   pattern,
   getValues,
-
 } from "@modular-forms/solid";
 
 import TextInput from "../../components/TextInput";
 import SwitchField from "../../components/SwitchField";
 import Button from "../../components/Button";
+import CardBase from "./CardBase";
+import CardList from "./CardList";
 
 type GeneralConfigForm = {
   auto_power_on: boolean;
   host_ip: string;
   target_ip: string;
   heartbeat_interval_s: number;
-  // retries: number;
+  status_sample_size: number;
+  retry_delay_s: number;
+  allow_power_retry_limit: boolean;
+  power_retry_limit: number;
 };
 
 type FormProps = {
@@ -35,6 +36,7 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
   const powerOn = () =>
     getValues(GeneralConfig, ["auto_power_on"]).auto_power_on;
 
+
   const handleSubmit: SubmitHandler<GeneralConfigForm> = async (
     values,
     event,
@@ -43,20 +45,23 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
   };
 
   return (
-    <div class="card">
-      <div class="card-header has-border">
-        <p class="card-header-title">General</p>
-      </div>
+    <CardBase>
       <GForm onSubmit={handleSubmit}>
-        <div class="card-content">
+        <div class="flex mb-6 justify-between items-center">
+          <h2 class="text-xl font-semibold">General</h2>
+          <div class="">
+            <Button type="submit" btn_type="btn-primary" label="Save" />
+          </div>
+        </div>
+        <CardList>
           <GField name="auto_power_on" type="boolean">
             {(field, props) => (
               <SwitchField
                 {...props}
                 value={field.value || false}
                 error={field.error}
-                title="Auto power on"
-                description="Enable automatic power on when the device is detected"
+                title="Auto Power On"
+                description="Automatically power on the PC when the Network Device becomes available."
               />
             )}
           </GField>
@@ -78,7 +83,8 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
                   type="text"
                   placeholder="0.0.0.0"
                   error={field.error}
-                  title="Host IP address"
+                  title="Target PC IP Address"
+                  description="IP address used to check whether the PC is online."
                   required
                 />
               )}
@@ -119,38 +125,83 @@ const ConfigCardGeneral: Component<FormProps> = (props) => {
                   min="10"
                   placeholder="10"
                   error={field.error}
-                  title="Heartbeat interval"
-                  description="Time interval in seconds to ping the target device"
+                  title="Ping Interval"
+                  description="Time interval in seconds between checks of the monitored devices."
                   required
                 />
               )}
             </GField>
-            {/* <GField
-              name="retries"
+            <GField
+              name="retry_delay_s"
               type="number"
-              validate={[required("Enter number of retries.")]}
+              validate={[required("Enter the value.")]}
             >
               {(field, props) => (
                 <TextInput
                   {...props}
                   value={field.value}
                   type="number"
-                  min="0"
-                  placeholder="0"
+                  min="1"
+                  placeholder="120"
                   error={field.error}
-                  title="Ping retries"
-                  description="Maximum retries before the device status changed"
+                  title="Power Retry Delay"
+                  description="Time in seconds to wait before sending another power signal if the PC did not turn on."
                   required
                 />
               )}
-            </GField> */}
+            </GField>
+            <GField
+              name="status_sample_size"
+              type="number"
+              validate={[required("Enter the value.")]}
+            >
+              {(field, props) => (
+                <TextInput
+                  {...props}
+                  value={field.value}
+                  type="number"
+                  min="1"
+                  max="10"
+                  placeholder="1"
+                  error={field.error}
+                  title="Status Check Count"
+                  description="Number of consecutive checks used to confirm whether the device is online or offline."
+                  required
+                />
+              )}
+            </GField>
+            <GField name="allow_power_retry_limit" type="boolean">
+              {(field, props) => (
+                <SwitchField
+                  {...props}
+                  value={field.value || false}
+                  error={field.error}
+                  title="Power On Retry Limit"
+                />
+              )}
+            </GField>
+              <GField
+                name="power_retry_limit"
+                type="number"
+                validate={[required("Enter the value.")]}
+              >
+                {(field, props) => (
+                  <TextInput
+                    {...props}
+                    value={field.value}
+                    type="number"
+                    min="1"
+                    placeholder="1"
+                    error={field.error}
+                    title="Retry Limit"
+                    required
+                  />
+                )}
+              </GField>
           </Show>
-        </div>
-        <div class="card-footer has-border">
-          <Button type="submit" btn_type="contained" label="Save" />
-        </div>
+        </CardList>
       </GForm>
-    </div>
+    </CardBase>
   );
 };
 

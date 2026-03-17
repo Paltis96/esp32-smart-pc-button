@@ -27,6 +27,7 @@ remote control and automatic startup after power outages.
   - [3. Upload Firmware to ESP32](#3-upload-firmware-to-esp32)
   - [4. Configure Settings](#4-configure-settings)
   - [5. Run the Device](#5-run-the-device)
+- [General Configuration](#general-configuration)
 - [REST API](#rest-api)
 - [Home Assistant Integration Example](#home-assistant-integration-example)
 - [Future Improvements](#future-improvements)
@@ -51,6 +52,10 @@ This allows the computer to **recover automatically after power outages** when r
 When **Auto Power On** is disabled, the device behaves like a simple
 **Wi-Fi-controlled power button** that can be triggered through the
 Web UI or REST API.
+
+> [!NOTE] 
+> Because the PC's status is checked via the network connection, 
+the **Auto Power On** feature may cause an endless reboot loop if there are network issues on the PC's end.
 
 ![Web UI](images/smart_switch_web_ui.png)
 
@@ -83,10 +88,6 @@ The full wiring diagram and assembly example are shown below.
 ![Assembled device](images/smart_switch_img.png)
 
 ![Device close-up](images/smart_switch_img2.png)
-
-> The ESP32 controls the PC power button using a **PC817 optocoupler**,
-which provides electrical isolation and safely simulates pressing the
-physical power button on the motherboard.
 
 
 # Software Stack
@@ -140,19 +141,22 @@ https://randomnerdtutorials.com/getting-started-thonny-micropython-python-ide-es
 
 
 ## 4. Configure Settings
+Add `wifi.txt` with WiFi credentials:
 
-Edit `settings.py` before running the device.
+``` bash
+YOUR_WIFI
+YOUR_PASSWORD
+```
+
+You can also edit `settings.py` to set GPIO pin.
 
 ``` python
 # esp32/settings.py
 
 # GPIO pin connected to optocoupler
 s_pin = 4
-
-# WiFi credentials
-ssid = "YOUR_WIFI"
-password = "YOUR_PASSWORD"
 ```
+
 
 
 ## 5. Run the Device
@@ -164,6 +168,18 @@ in the serial console or find the device by its hostname **esp32-pc-button**.
 
 Open the address in your browser to access the **Web UI**.
 
+# General Configuration
+
+| Field                     | Description                                                                | Notes                                             |
+| ------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------- |
+| `auto_power_on`           | Automatically powers on the PC when the monitored device becomes available |                                                   |
+| `host_ip`                 | IP address used to check whether the PC is online                          | Must be valid IPv4                                |
+| `target_ip`               | IP address of the device being monitored                                   | Must be valid IPv4                                |
+| `heartbeat_interval_s`    | Time interval between connectivity checks                                  | Not recomended sey lover then 30 seccons          |
+| `retry_delay_s`           | Delay before retrying power-on if the PC did not start                     | Must be higher then PC boot time (1.5, 2 times)   |
+| `status_sample_size`      | Number of consecutive checks to confirm online/offline status              | Range: 1–10; higher values reduce false positives |
+| `allow_power_retry_limit` | Enables limiting the number of power-on retry attempts                     |                                                   |
+| `power_retry_limit`       | Maximum number of retry attempts                                           | Required when retry limit is enabled; minimum: 1  |
 
 # REST API
 
@@ -174,9 +190,11 @@ Access the API through the IP address assigned to the ESP32.
   | GET    | `/api/config`      | Get current configuration    |
   | PUT    | `/api/config`      | Update configuration         |
   | GET    | `/api/signal`      | Trigger power signal         |
+  | GET    | `/api/retry_clear` | Clear retry counter          |
   | GET    | `/api/ping_status` | Get device monitoring status |
   | GET    | `/api/sys/reboot`  | Reboot ESP32                 |
   | GET    | `/api/sys/info`    | Get system information       |
+  | GET    | `/api/sys/logs`    | Get system logs              |
 
 
 # Home Assistant Integration Example
