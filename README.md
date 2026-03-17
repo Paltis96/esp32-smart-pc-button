@@ -173,10 +173,10 @@ Open the address in your browser to access the **Web UI**.
 | Field                     | Description                                                                | Notes                                             |
 | ------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------- |
 | `auto_power_on`           | Automatically powers on the PC when the monitored device becomes available |                                                   |
-| `host_ip`                 | IP address used to check whether the PC is online                          | Must be valid IPv4                                |
-| `target_ip`               | IP address of the device being monitored                                   | Must be valid IPv4                                |
-| `heartbeat_interval_s`    | Time interval between connectivity checks                                  | Not recomended sey lover then 30 seccons          |
-| `retry_delay_s`           | Delay before retrying power-on if the PC did not start                     | Must be higher then PC boot time (1.5, 2 times)   |
+| `host_ip`                 | IP address used to check whether the PC is online                          | Must be a valid IPv4 address                      |
+| `target_ip`               | IP address of the device being monitored                                   | Must be a valid IPv4 address                      |
+| `heartbeat_interval_s`    | Time interval between connectivity checks                                  | Not recommended to set lower than 30 seconds      |
+| `retry_delay_s`           | Delay before retrying power-on if the PC did not start                     | Should be higher than PC boot time (e.g., 1.5–2×) |
 | `status_sample_size`      | Number of consecutive checks to confirm online/offline status              | Range: 1–10; higher values reduce false positives |
 | `allow_power_retry_limit` | Enables limiting the number of power-on retry attempts                     |                                                   |
 | `power_retry_limit`       | Maximum number of retry attempts                                           | Required when retry limit is enabled; minimum: 1  |
