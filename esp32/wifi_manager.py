@@ -1,5 +1,6 @@
 import network
 import time
+from logging import logger
 
 
 def get_wifi_credentials():
@@ -16,13 +17,13 @@ def ensure_wifi(ssid, password):
     wlan.active(True)
     wlan.config(hostname='esp32-pc-button')
     if not wlan.isconnected():
-        print(f"Connecting to {ssid}...")
+        logger.info(f"Connecting to {ssid}...")
 
         try:
             wlan.connect(ssid, password)
         except Exception as err:
-            print(err)
-            print('Failed to connect to Wi-Fi.')
+            logger.error(err)
+            logger.warning('Failed to connect to Wi-Fi.')
             return False
 
         max_wait = 20
@@ -30,7 +31,7 @@ def ensure_wifi(ssid, password):
             if wlan.isconnected():
                 break
             max_wait -= 1
-            print('Waiting for connection...')
+            logger.info('Waiting for connection...')
             time.sleep(1)
 
     if wlan.isconnected():

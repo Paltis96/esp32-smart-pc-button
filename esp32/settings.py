@@ -1,19 +1,11 @@
 import json
 from machine import Pin
+from logging import logger
+
 
 
 # GPIO pin connected to optocoupler
 s_pin = 4
-
-ALLOWED_KEYS = (
-    "host_ip",
-    "target_ip",
-    "heartbeat_interval_s",
-    "auto_power_on",
-    "retry_delay_s",
-    'status_sample_size'
-)
-
 
 
 def dump_config_json(data=None):
@@ -40,10 +32,10 @@ try:
     with open('./config.json') as f:
         config_json = json.load(f)
 except OSError:
-    print("OSError: Generating new config.json.")
+    logger.warning("OSError: Generating new config.json.")
     dump_config_json()
 except ValueError:
-    print("ValueError: Generating new config.json.")
+    logger.warning("ValueError: Generating new config.json.")
     dump_config_json()
 
 with open('./config.json') as f:
@@ -58,7 +50,7 @@ class GeneralConfig:
                  "retries",
                  "s_pin",
                  'retry_delay_s',
-                 'status_sample_size'
+                 'status_sample_size',
                  'history_limit'
                  )
     _instance = None
@@ -76,23 +68,10 @@ class GeneralConfig:
         self.retry_delay_s = config.get("retry_delay_s", 120)
         self.status_sample_size = config.get("status_sample_size", 3)
 
-    def update(self, config):
-        hl = config.get("history_limit")
-        sss = config.get("status_sample_size")
-
-        if sss and hl:
-            if sss > hl:
-                raise Exception(
-                    "status_sample_size can't be bigger than history_limit")
-        elif sss and not hl:
-            if sss > self.history_limit:
-                raise Exception(
-                    "status_sample_size can't be bigger than history_limit")
-                
+    def update(self, config):              
         for key in config:
             if hasattr(self, key):
                 setattr(self, key, config[key])
-        # Save the updated configuration back to file
 
         save_config_json(self.to_dict())
 

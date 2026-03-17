@@ -2,6 +2,7 @@ import machine
 from settings import conf_general, s_pin
 from time import time, sleep
 import asyncio
+from logging import logger
 
 
 class PowerController:
@@ -44,14 +45,14 @@ class PowerController:
 
     async def _tcp_ping(self, host, port=80, timeout=2):
         try:
-            print(f"Ping: {host}")
+            logger.debug(f"Ping: {host}")
             conn = asyncio.open_connection(host, port)
             reader, writer = await asyncio.wait_for(conn, timeout=timeout)
             writer.close()
             await writer.wait_closed()
             return True
         except Exception as e:
-            print(f"Ping error: {e}")
+            logger.warning(f"Ping error: {e}")
             return False
 
     def _push_state(self, history, state):
@@ -74,35 +75,41 @@ class PowerController:
         self._pin.on()
         sleep(self._pulse_s)
         self._pin.off()
-        print("Power signal sent")
+        logger.info("Power signal sent")
 
     def set_delay(self, delay_s):
         self._next_allowed_trigger_time = time() + delay_s
+
 
     async def tick(self):
         now = time()
 
         if not self._config.host_ip:
-            print('Host IP address not set.')
+            logger.warning('Host IP address not set.')
             return
 
         if not self._config.target_ip:
-            print('Target IP address not set.')
+            logger.warning('Target IP address not set.')
             return
 
         host_online = await self._tcp_ping(str(self._config.host_ip))
         await asyncio.sleep(0.01)
         target_online = await self._tcp_ping(str(self._config.target_ip))
+        hs = 'up' if host_online else 'down'
+        ts = 'up' if target_online else 'down'
 
+        if not host_online:
+            logger.info(f"Host: {hs} | Target: {ts}")
+            
         self._push_state(self.host_history, host_online)
         self._push_state(self.target_history, target_online)
 
         if not host_online and self._is_all_true(self.target_history):
             if now >= self._next_allowed_trigger_time:
-                print('Triggering a host to wake up...')
+                logger.info('Triggering a host to wake up...')
                 self.trigger_switch()
-                self.set_delay(self._config.retry_delay_s
-                               )
+                self.set_delay(self._config.retry_delay_s)
+                logger.info(f"Next try in {self._next_allowed_trigger_time} | delay = {self._config.retry_delay_s}")
 
     def status(self):
         data = {"host_history": self.host_history,
