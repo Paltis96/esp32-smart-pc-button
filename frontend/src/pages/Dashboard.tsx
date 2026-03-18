@@ -95,7 +95,7 @@ const DashboardPage: Component = () => {
         return "badge-error";
       case s === "Fair":
         return "badge-warning";
-      case s === "Good" || s === "Excellent":
+      case s === "Good":
         return "badge-success";
       default:
         return "";

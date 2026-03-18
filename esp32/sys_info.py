@@ -4,9 +4,7 @@ import gc
 
 
 def wifi_signal_status(rssi):
-    if rssi >= -50:
-        return f"Excellent {rssi} dBm"
-    elif rssi >= -65:
+    if rssi >= -65:
         return f"Good {rssi} dBm"
     elif rssi >= -75:
         return f"Fair {rssi} dBm"
