@@ -41,15 +41,15 @@ class PowerController:
             history.pop(0)
 
     def _stable_state(self, history):
-        if len(history) < self._config.status_sample_size:
-            return None
+            if len(history) < self._config.status_sample_size:
+                return None
+            
+            window = history[-self._config.status_sample_size:]
+            
+
+            if all(val == window[0] for val in window):
+                return True
         
-        window = history[-self._config.status_sample_size:]
-       
-        if all(window):
-            return True
-    
-        if any(window):
             return False
 
     async def trigger_switch(self):
@@ -144,3 +144,5 @@ class PowerController:
 
 
 controller = PowerController(conf_general, s_pin)
+
+
