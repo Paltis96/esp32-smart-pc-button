@@ -113,10 +113,10 @@ const DashboardPage: Component = () => {
                   url={ctx?.config.data?.host_ip}
                   hpList={ctx?.ping.data.host_history}
                 >
-                  <Show when={ctx?.ping.data.massage}>
+                  <Show when={ctx?.ping.data.message}>
                     <Alert type="alert-warning">
                       <div></div>
-                      <div class="font-semibold">{ctx?.ping.data.massage}</div>
+                      <div class="font-semibold">{ctx?.ping.data.message}</div>
                       <Button
                         onClick={() => clearRerty()}
                         label="Clear Counter"

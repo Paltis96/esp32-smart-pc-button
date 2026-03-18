@@ -26,7 +26,7 @@ const HpCardTarget: Component<CardProps> = (props) => {
     }
   };
   return (
-    <div class="card bg-base-100 shadow-sm">
+    <div class="card bg-base-100 shadow-sm border border-white/5">
       <div class="card-body">
         <div class="flex justify-between">
           <div>

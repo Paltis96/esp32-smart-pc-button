@@ -28,7 +28,7 @@ const App: Component = () => {
               onTabSelect={(value) => setSelectedPage(value)}
             />
           </Show>
-          <div class="max-w-5xl mx-auto pt-16">
+          <div class="max-w-5xl mx-auto pt-18">
             <Preloader />
             <Dynamic component={options[selectedPage()].value} />
           </div>

@@ -51,7 +51,7 @@ const [DeviceProvider, useDevice] = createContextProvider(() => {
     });
     const [ping, setPing] = createStore<GenericStore>({
         loading: true,
-        data: { host_history: [], target_history: [], massage: '' },
+        data: { host_history: [], target_history: [], message: '' },
         status: undefined,
         message: undefined
     });
@@ -63,7 +63,7 @@ const [DeviceProvider, useDevice] = createContextProvider(() => {
     });
 
     const cleanPingMsg = () => {
-      setPing("data", "massage", "");
+      setPing("data", "message", "");
     }
 createEffect(() => {
 
