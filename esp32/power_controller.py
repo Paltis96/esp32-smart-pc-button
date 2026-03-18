@@ -15,14 +15,13 @@ class PowerController:
 
         self._config = config
         self._pin = machine.Pin(pin, machine.Pin.OUT)
-
         self.host_history = []
         self.target_history = []
         self._pulse_s = pulse_s
         self._next_allowed_trigger_time = 0
         self._history_limit = history_limit
         self._power_retry = 0
-        self._massage = None
+        self._message = None
         
     async def _tcp_check(self, host, port=80, timeout=2):
         try:
@@ -44,7 +43,14 @@ class PowerController:
     def _stable_state(self, history):
         if len(history) < self._config.status_sample_size:
             return None
-        return all(history[-self._config.status_sample_size:])
+        
+        window = history[-self._config.status_sample_size:]
+       
+        if all(window):
+            return True
+    
+        if any(window):
+            return False
 
     async def trigger_switch(self):
         self._pin.on()
@@ -55,8 +61,8 @@ class PowerController:
     def set_delay(self, delay_s):
         self._next_allowed_trigger_time = time() + delay_s
 
-    def clear_massage(self):
-        self._massage = None
+    def clear_message(self):
+        self._message = None
 
     def reset_retry_counter(self):
         self._power_retry = 0
@@ -73,7 +79,6 @@ class PowerController:
             return
 
         host_online = await self._tcp_check(str(self._config.host_ip))
-        await asyncio.sleep(0.01)
         target_online = await self._tcp_check(str(self._config.target_ip))
         
         hs = 'up' if host_online else 'down'
@@ -84,24 +89,37 @@ class PowerController:
         self._push_state(self.host_history, host_online)
         self._push_state(self.target_history, target_online)
         
+
         host_stable = self._stable_state(self.host_history)
         target_stable = self._stable_state(self.target_history)
         
+        # until history is filled
         if host_stable is None or target_stable is None:
+            return
+        
+        # until host online is stable
+        if host_online and not host_stable:
+            logger.info("Host back online, but unstable.")
             return
         
         if self._config.allow_power_retry_limit:
             # clear rerty count if host online and stable
             if host_online:
-                logger.info("Host back online, resetting retry counter.")
-                self.reset_retry_counter()
-                self.clear_massage()
+                if self._power_retry > 0:
+                    logger.info("Host back online, resetting retry counter.")
+                    self.reset_retry_counter()
+                    self.clear_message()
                 
-            if self._power_retry >= self._config.power_retry_limit:
+            if self._power_retry > self._config.power_retry_limit:
+                msg = "Reached retry limit."
+                if msg != self._message:
+                    self._message = msg
+                logger.info(msg)
                 return
-        
-        
-        if not host_stable and target_stable:
+
+            
+        # host down for long period and target online
+        if (not host_online and host_stable) and (target_online and target_stable):
             if now >= self._next_allowed_trigger_time:
                 logger.info('Triggering a host to wake up...')
                 await self.trigger_switch()
@@ -109,17 +127,18 @@ class PowerController:
                 msg = f"Power On Retry: {self._power_retry} / {self._config.power_retry_limit}"
                 logger.info(msg)
                 if self._power_retry > 0:
-                    self._massage = msg
+                    self._message = msg
 
                 self.set_delay(self._config.retry_delay_s)
                 logger.info(f"Next retry in {self._config.retry_delay_s}s")
                 
                 self._power_retry += 1
+                
 
     def status(self):
         data = {"host_history": self.host_history,
                 "target_history": self.target_history,
-                "massage": self._massage
+                "message": self._message
                 }
         return data
 

@@ -72,7 +72,7 @@ async def config(request):
 @app.get('/api/retry_clear')
 async def retry_reset(request):
     controller.reset_retry_counter()
-    controller.clear_massage()
+    controller.clear_message()
     return json_response(message='ok', status_code=200)
 
 @app.get('/api/signal')
